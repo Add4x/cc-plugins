@@ -1,0 +1,21 @@
+{
+  "name": "development-plugins-marketplace",
+  "displayName": "Development Plugins",
+  "description": "Marketplace for productivity and knowledge management plugins",
+  "owner": {
+    "name": "Shyju Viswambaran",
+    "email": "shyju.viswambaran@coxautoinc.com"
+  },
+  "plugins": [
+    {
+      "name": "context-management",
+      "displayName": "Context Management",
+      "description": "Intelligent context management for any project - captures and restores knowledge, architecture, and patterns",
+      "version": "1.0.0",
+      "author": "Development Team",
+      "source": "./context-management",
+      "keywords": ["context", "knowledge-management", "memory", "architecture", "patterns"],
+      "category": "productivity"
+    }
+  ]
+}
