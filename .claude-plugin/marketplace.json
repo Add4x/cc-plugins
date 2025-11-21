@@ -16,6 +16,17 @@
       },
       "source": "./context-management",
       "keywords": ["context", "knowledge-management", "memory", "architecture", "patterns"]
+    },
+    {
+      "name": "aws-profile-manager",
+      "description": "Manage AWS credentials across multiple accounts using ALKS with named profiles for simultaneous access",
+      "version": "1.0.0",
+      "author": {
+        "name": "Shyju Viswambaran",
+        "email": "shyju.viswambaran@coxautoinc.com"
+      },
+      "source": "./aws-profile-manager",
+      "keywords": ["aws", "alks", "credentials", "multi-account", "devops"]
     }
   ]
 }

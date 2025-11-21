@@ -21,6 +21,27 @@ Intelligent context management for any project - captures and restores knowledge
 
 [View full documentation](./context-management/README.md)
 
+### ☁️ [AWS Profile Manager](./aws-profile-manager/)
+
+Manage AWS credentials across multiple accounts using ALKS with named profiles for simultaneous access.
+
+**Features:**
+- Named profile management for multiple AWS accounts
+- ALKS integration for automated credential refresh
+- Multiple active profiles simultaneously
+- Expiration tracking and monitoring
+- Smart role selection (Admin/ReadOnly)
+- Safety-first (production accounts use readonly)
+
+**Commands:**
+- `/aws-auth <profile>` - Refresh specific profile credentials
+- `/aws-auth-all` - Refresh all profiles at once
+- `/aws-status` - Show all profile statuses and expiration
+- `/aws-switch <profile>` - Switch active AWS profile
+- `/aws-accounts` - Display account reference table
+
+[View full documentation](./aws-profile-manager/README.md)
+
 ## Installation
 
 ### Add This Marketplace
@@ -36,6 +57,9 @@ Intelligent context management for any project - captures and restores knowledge
 # Install context management plugin
 /plugin install context-management@development-plugins-marketplace
 
+# Install AWS profile manager plugin
+/plugin install aws-profile-manager@development-plugins-marketplace
+
 # Verify installation
 /plugin list
 ```
@@ -47,6 +71,10 @@ cc-plugins/
 ├── .claude-plugin/
 │   └── marketplace.json        # Marketplace configuration
 ├── context-management/          # Context management plugin
+│   ├── agents/
+│   ├── commands/
+│   └── README.md
+├── aws-profile-manager/         # AWS profile manager plugin
 │   ├── agents/
 │   ├── commands/
 │   └── README.md
@@ -143,5 +171,5 @@ For issues or questions:
 ---
 
 **Current Version**: 1.0.0
-**Plugins**: 1
+**Plugins**: 2
 **Status**: Active Development
