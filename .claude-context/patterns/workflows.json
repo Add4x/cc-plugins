@@ -1,0 +1,434 @@
+{
+  "development_workflows": {
+    "creating_new_plugin": {
+      "description": "Complete workflow for adding a new plugin to the marketplace",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Create plugin directory",
+          "command": "mkdir my-new-plugin",
+          "details": "Use kebab-case naming"
+        },
+        {
+          "step": 2,
+          "action": "Create standard subdirectories",
+          "command": "cd my-new-plugin && mkdir -p agents commands",
+          "details": "agents/ and commands/ are most common"
+        },
+        {
+          "step": 3,
+          "action": "Define agents (if needed)",
+          "file": "agents/agent-name.md",
+          "details": "Create markdown file with YAML frontmatter and instructions"
+        },
+        {
+          "step": 4,
+          "action": "Define commands (if needed)",
+          "file": "commands/command-name.md",
+          "details": "Create markdown file with YAML frontmatter and command logic"
+        },
+        {
+          "step": 5,
+          "action": "Write plugin README",
+          "file": "README.md",
+          "details": "Document features, installation, usage, examples"
+        },
+        {
+          "step": 6,
+          "action": "Register in marketplace",
+          "file": ".claude-plugin/marketplace.json",
+          "details": "Add plugin entry with name, version, description, author, source"
+        },
+        {
+          "step": 7,
+          "action": "Test plugin installation",
+          "command": "/plugin marketplace refresh development-plugins-marketplace",
+          "details": "Refresh marketplace to see new plugin"
+        },
+        {
+          "step": 8,
+          "action": "Install and test plugin",
+          "command": "/plugin install my-new-plugin@development-plugins-marketplace",
+          "details": "Verify plugin installs and commands work"
+        },
+        {
+          "step": 9,
+          "action": "Commit to git",
+          "command": "git add . && git commit -m \"Add my-new-plugin for XYZ functionality\"",
+          "details": "Track in version control"
+        }
+      ],
+      "example": "See context-management/ and aws-profile-manager/ for reference implementations"
+    },
+    "adding_agent_to_plugin": {
+      "description": "Add a new agent to an existing plugin",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Create agent markdown file",
+          "file": "plugin-name/agents/agent-name.md",
+          "details": "Use kebab-case naming"
+        },
+        {
+          "step": 2,
+          "action": "Add YAML frontmatter",
+          "content": "---\nname: agent-name\ndescription: Brief description\nmodel: haiku|sonnet|opus\n---"
+        },
+        {
+          "step": 3,
+          "action": "Write agent instructions",
+          "sections": [
+            "Core expertise and responsibilities",
+            "Behavioral guidelines",
+            "Tool usage patterns",
+            "Response methodology",
+            "Example use cases"
+          ]
+        },
+        {
+          "step": 4,
+          "action": "Update plugin README",
+          "details": "Document the new agent in the Components section"
+        },
+        {
+          "step": 5,
+          "action": "Test agent behavior",
+          "details": "Invoke agent through commands or Task tool to verify behavior"
+        }
+      ]
+    },
+    "adding_command_to_plugin": {
+      "description": "Add a new command to an existing plugin",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Create command markdown file",
+          "file": "plugin-name/commands/command-name.md",
+          "details": "Use kebab-case naming, verb-noun pattern"
+        },
+        {
+          "step": 2,
+          "action": "Add YAML frontmatter",
+          "content": "---\nname: command-name\ndescription: Brief description\nmodel: haiku|sonnet|opus (optional)\n---"
+        },
+        {
+          "step": 3,
+          "action": "Write command instructions",
+          "sections": [
+            "Brief description of purpose",
+            "Parameter handling ({{arg}})",
+            "Task breakdown",
+            "Execution steps",
+            "Output format",
+            "Error handling"
+          ]
+        },
+        {
+          "step": 4,
+          "action": "Update plugin README",
+          "details": "Document the new command with usage examples"
+        },
+        {
+          "step": 5,
+          "action": "Test command",
+          "command": "/command-name [args]",
+          "details": "Verify command executes as expected"
+        }
+      ]
+    },
+    "updating_plugin_version": {
+      "description": "Update plugin version after changes",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Determine version bump",
+          "details": "MAJOR (breaking), MINOR (features), PATCH (fixes)"
+        },
+        {
+          "step": 2,
+          "action": "Update marketplace.json",
+          "file": ".claude-plugin/marketplace.json",
+          "field": "plugins[].version",
+          "details": "Increment version number"
+        },
+        {
+          "step": 3,
+          "action": "Update plugin README",
+          "section": "Version section at bottom",
+          "details": "Document new version and changes"
+        },
+        {
+          "step": 4,
+          "action": "Commit changes",
+          "command": "git commit -m \"Bump plugin-name to v1.1.0\"",
+          "details": "Clear commit message with version"
+        },
+        {
+          "step": 5,
+          "action": "Refresh marketplace",
+          "command": "/plugin marketplace refresh development-plugins-marketplace",
+          "details": "Users will see updated version"
+        }
+      ]
+    },
+    "installing_marketplace": {
+      "description": "Add and use the plugin marketplace",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Add marketplace to Claude Code",
+          "command": "/plugin marketplace add /Users/shyju.viswambaran/backend/cc-plugins",
+          "details": "Use absolute path to marketplace root"
+        },
+        {
+          "step": 2,
+          "action": "Verify marketplace added",
+          "command": "/plugin marketplace list",
+          "details": "Should see development-plugins-marketplace"
+        },
+        {
+          "step": 3,
+          "action": "Browse available plugins",
+          "command": "/plugin marketplace search development-plugins-marketplace",
+          "details": "See all plugins in marketplace"
+        }
+      ]
+    },
+    "installing_plugin": {
+      "description": "Install a plugin from the marketplace",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Install plugin",
+          "command": "/plugin install plugin-name@development-plugins-marketplace",
+          "details": "Use plugin name and marketplace name"
+        },
+        {
+          "step": 2,
+          "action": "Verify installation",
+          "command": "/plugin list",
+          "details": "Should see plugin in installed list"
+        },
+        {
+          "step": 3,
+          "action": "Test plugin commands",
+          "example": "/context-save or /aws-auth nonprod",
+          "details": "Verify commands are available and work"
+        }
+      ]
+    },
+    "context_management_workflow": {
+      "description": "Typical workflow using context-management plugin",
+      "scenarios": {
+        "initial_project_setup": {
+          "steps": [
+            "Navigate to project directory",
+            "Run /context-save to capture initial context",
+            "Review .claude-context/ directory",
+            "Continue development",
+            "Run /context-restore in future sessions"
+          ]
+        },
+        "resuming_work": {
+          "steps": [
+            "Open project after break",
+            "Run /context-restore to load project knowledge",
+            "Claude has full architectural understanding",
+            "Continue work seamlessly"
+          ]
+        },
+        "before_major_refactoring": {
+          "steps": [
+            "Run /context-save to capture current state",
+            "Perform refactoring",
+            "Run /context-save again",
+            "Compare contexts to see evolution"
+          ]
+        },
+        "team_onboarding": {
+          "steps": [
+            "Senior developer runs /context-save",
+            "Commits .claude-context/ to repository",
+            "New team member clones repository",
+            "New member runs /context-restore",
+            "Instant project understanding"
+          ]
+        }
+      }
+    },
+    "aws_credential_workflow": {
+      "description": "Managing AWS credentials with aws-profile-manager",
+      "scenarios": {
+        "refresh_single_profile": {
+          "steps": [
+            "Run /aws-auth <profile>",
+            "Example: /aws-auth nonprod",
+            "ALKS CLI executes credential refresh",
+            "Credentials valid for ~12 hours",
+            "Use profile: export AWS_PROFILE=vc-nonprod"
+          ]
+        },
+        "refresh_all_profiles": {
+          "steps": [
+            "Run /aws-auth-all",
+            "All four profiles refreshed sequentially",
+            "Takes 30-60 seconds",
+            "All credentials valid for ~12 hours"
+          ]
+        },
+        "check_status": {
+          "steps": [
+            "Run /aws-status",
+            "See all profiles and their status",
+            "Identify expired credentials",
+            "Refresh as needed"
+          ]
+        },
+        "switch_profiles": {
+          "steps": [
+            "Run /aws-switch <profile>",
+            "Sets AWS_PROFILE environment variable",
+            "Future AWS CLI commands use new profile"
+          ]
+        },
+        "daily_workflow": {
+          "steps": [
+            "Morning: Run /aws-auth-all to refresh all profiles",
+            "Work throughout day on different accounts",
+            "Use /aws-switch to change active profile",
+            "Run /aws-status to check expiration",
+            "Refresh before credentials expire (every 12 hours)"
+          ]
+        }
+      }
+    },
+    "git_workflow": {
+      "description": "Version control workflow for the marketplace",
+      "current_state": {
+        "branch": "main",
+        "remote": "git@ghe.coxautoinc.com:Shyju-Viswambaran/cc-plugins.git",
+        "status": "Clean, with untracked aws-profile-manager/"
+      },
+      "typical_workflow": [
+        {
+          "action": "Make changes to plugins",
+          "details": "Add/update agents, commands, documentation"
+        },
+        {
+          "action": "Stage changes",
+          "command": "git add .",
+          "details": "Or stage specific files"
+        },
+        {
+          "action": "Commit with descriptive message",
+          "command": "git commit -m \"Descriptive message\"",
+          "example": "git commit -m \"Add AWS profile manager plugin\""
+        },
+        {
+          "action": "Push to remote",
+          "command": "git push origin main",
+          "details": "Share with team"
+        }
+      ],
+      "pending_actions": {
+        "description": "aws-profile-manager directory is untracked",
+        "action": "Need to add and commit aws-profile-manager plugin",
+        "commands": [
+          "git add aws-profile-manager/",
+          "git commit -m \"Add AWS profile manager plugin\"",
+          "git push origin main"
+        ]
+      }
+    },
+    "testing_workflow": {
+      "description": "Testing plugins before release",
+      "manual_testing": {
+        "steps": [
+          {
+            "action": "Test marketplace refresh",
+            "command": "/plugin marketplace refresh development-plugins-marketplace",
+            "verify": "Marketplace updates successfully"
+          },
+          {
+            "action": "Test plugin installation",
+            "command": "/plugin install plugin-name@development-plugins-marketplace",
+            "verify": "Plugin installs without errors"
+          },
+          {
+            "action": "Test each command",
+            "commands": "Run all plugin commands with various inputs",
+            "verify": "Commands execute correctly, handle errors gracefully"
+          },
+          {
+            "action": "Test agent invocation",
+            "method": "Use Task tool to invoke agents",
+            "verify": "Agents behave as expected"
+          },
+          {
+            "action": "Test documentation",
+            "action_detail": "Follow README instructions",
+            "verify": "Instructions are accurate and complete"
+          }
+        ]
+      },
+      "automated_testing": {
+        "status": "Not currently implemented",
+        "future": "Could add automated tests for plugins"
+      }
+    }
+  },
+  "common_operations": {
+    "refresh_marketplace": {
+      "command": "/plugin marketplace refresh development-plugins-marketplace",
+      "when": "After updating marketplace.json or plugin content",
+      "effect": "Claude Code reloads marketplace configuration"
+    },
+    "list_plugins": {
+      "command": "/plugin list",
+      "when": "To see installed plugins",
+      "output": "Shows all installed plugins with versions"
+    },
+    "uninstall_plugin": {
+      "command": "/plugin uninstall plugin-name",
+      "when": "To remove a plugin",
+      "effect": "Plugin commands and agents no longer available"
+    },
+    "view_plugin_info": {
+      "command": "/plugin info plugin-name",
+      "when": "To see plugin details",
+      "output": "Shows plugin metadata, version, description"
+    }
+  },
+  "best_practices": {
+    "development": [
+      "Test plugins thoroughly before committing",
+      "Write comprehensive README documentation",
+      "Use appropriate Claude models for commands (haiku for simple, sonnet for complex)",
+      "Follow naming conventions consistently",
+      "Provide clear error messages and troubleshooting steps",
+      "Include usage examples in documentation",
+      "Keep plugins focused and single-purpose"
+    ],
+    "version_control": [
+      "Commit frequently with clear messages",
+      "Update version numbers for changes",
+      "Document breaking changes clearly",
+      "Keep main branch stable",
+      "Review changes before committing"
+    ],
+    "security": [
+      "Never commit sensitive credentials",
+      "Document security considerations",
+      "Use permission configuration appropriately",
+      "Warn users about production access",
+      "Validate user input in commands"
+    ],
+    "documentation": [
+      "Keep READMEs up to date",
+      "Provide realistic examples",
+      "Document all commands and agents",
+      "Include troubleshooting sections",
+      "Explain configuration options"
+    ]
+  }
+}

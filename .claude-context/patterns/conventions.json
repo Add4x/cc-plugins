@@ -1,0 +1,343 @@
+{
+  "naming_conventions": {
+    "plugins": {
+      "format": "kebab-case",
+      "pattern": "descriptive-name",
+      "examples": [
+        "context-management",
+        "aws-profile-manager"
+      ],
+      "rules": [
+        "Use lowercase",
+        "Separate words with hyphens",
+        "Be descriptive of plugin functionality",
+        "Avoid abbreviations unless well-known"
+      ]
+    },
+    "agents": {
+      "file_format": "kebab-case.md",
+      "pattern": "role-or-domain-name",
+      "examples": [
+        "context-manager.md",
+        "aws-profile-manager.md"
+      ],
+      "rules": [
+        "Name reflects agent's expertise domain",
+        "Single responsibility principle",
+        "Descriptive of agent's role"
+      ]
+    },
+    "commands": {
+      "file_format": "kebab-case.md",
+      "pattern": "verb-noun or action-target",
+      "invocation": "/command-name",
+      "examples": [
+        "context-save.md → /context-save",
+        "context-restore.md → /context-restore",
+        "aws-auth.md → /aws-auth",
+        "aws-status.md → /aws-status",
+        "aws-switch.md → /aws-switch"
+      ],
+      "rules": [
+        "Start with action verb when possible",
+        "Clear indication of what command does",
+        "Short and memorable",
+        "Avoid special characters",
+        "Namespace with domain prefix if needed (aws-, context-, etc.)"
+      ]
+    },
+    "directories": {
+      "format": "lowercase, optional hyphens",
+      "structure": [
+        "agents/ - Agent definitions",
+        "commands/ - Command definitions",
+        "skills/ - Reusable skills (optional)",
+        "hooks/ - Event hooks (optional)"
+      ]
+    },
+    "marketplace": {
+      "identifier": "kebab-case",
+      "example": "development-plugins-marketplace",
+      "rules": [
+        "Unique marketplace name",
+        "Descriptive of marketplace purpose",
+        "Avoid conflicts with plugin names"
+      ]
+    }
+  },
+  "file_conventions": {
+    "markdown": {
+      "extensions": [".md"],
+      "uses": [
+        "Agent definitions",
+        "Command definitions",
+        "Documentation (README.md)",
+        "Context documentation files"
+      ],
+      "frontmatter": {
+        "format": "YAML",
+        "delimiters": "--- (three dashes)",
+        "required_fields": ["name", "description"],
+        "optional_fields": ["model", "version"]
+      },
+      "content": {
+        "format": "GitHub-flavored Markdown",
+        "supports": [
+          "Headers",
+          "Code blocks with syntax highlighting",
+          "Tables",
+          "Lists",
+          "Links",
+          "Emphasis (bold, italic)"
+        ]
+      }
+    },
+    "json": {
+      "extensions": [".json"],
+      "uses": [
+        "Marketplace configuration (marketplace.json)",
+        "Settings configuration (settings.local.json)",
+        "Pattern data (code-patterns.json)",
+        "Context metadata (metadata.json)"
+      ],
+      "formatting": {
+        "indentation": "2 spaces",
+        "trailing_commas": "not allowed (strict JSON)",
+        "quote_style": "double quotes"
+      }
+    },
+    "README": {
+      "filename": "README.md",
+      "required_for": [
+        "Marketplace root",
+        "Each plugin"
+      ],
+      "purpose": "Primary documentation file",
+      "sections_recommended": [
+        "Title and description",
+        "Features",
+        "Installation",
+        "Usage",
+        "Configuration",
+        "Contributing",
+        "License"
+      ]
+    }
+  },
+  "code_style": {
+    "markdown": {
+      "headers": {
+        "style": "ATX style (# Header)",
+        "spacing": "One blank line before and after headers",
+        "hierarchy": "Use proper nesting (H1 > H2 > H3)"
+      },
+      "lists": {
+        "unordered": "Use - (hyphen) for bullets",
+        "ordered": "Use 1. 2. 3. numbering",
+        "nesting": "Indent nested items with 2 spaces"
+      },
+      "code_blocks": {
+        "fencing": "Use triple backticks ```",
+        "language": "Always specify language for syntax highlighting",
+        "indentation": "No indentation for top-level code blocks"
+      },
+      "links": {
+        "style": "Inline links [text](url) for external",
+        "relative": "Use relative paths for internal files",
+        "example": "[View documentation](./README.md)"
+      }
+    },
+    "json": {
+      "indentation": "2 spaces",
+      "property_order": [
+        "name (first)",
+        "description",
+        "version",
+        "author",
+        "metadata fields",
+        "configuration fields"
+      ],
+      "string_values": "Use double quotes",
+      "trailing_commas": "Not allowed"
+    }
+  },
+  "documentation_conventions": {
+    "agent_documentation": {
+      "sections": [
+        "Title and expertise summary",
+        "Core Expertise - Bullet list of capabilities",
+        "Behavioral Foundation - Guiding principles",
+        "Response Methodology - Step-by-step approach",
+        "Key Principles - Important guidelines",
+        "Example Use Cases - Practical scenarios"
+      ],
+      "tone": "Professional, authoritative, clear",
+      "format": "Use headers, bullet points, and code blocks"
+    },
+    "command_documentation": {
+      "sections": [
+        "Brief description of command purpose",
+        "Task breakdown",
+        "Expected parameters (using {{arg}})",
+        "Step-by-step execution guide",
+        "Output format specification",
+        "Error handling instructions",
+        "Examples"
+      ],
+      "tone": "Imperative, action-oriented",
+      "format": "Step-by-step instructions"
+    },
+    "plugin_README": {
+      "structure": [
+        "Title + tagline",
+        "Overview section",
+        "Features (bullet list)",
+        "Installation (code blocks)",
+        "Components (agents and commands)",
+        "Usage Examples (with code)",
+        "Configuration options",
+        "Best Practices",
+        "Troubleshooting",
+        "Version and status"
+      ],
+      "style": {
+        "headings": "Use sentence case",
+        "examples": "Provide realistic, runnable examples",
+        "code_blocks": "Always include command syntax",
+        "warnings": "Use ⚠ or **Important:** for warnings"
+      }
+    },
+    "inline_documentation": {
+      "comments_in_json": "Not supported, use separate docs",
+      "comments_in_markdown": "Use <!-- HTML comments --> sparingly",
+      "code_examples": "Include comments in code blocks for clarity"
+    }
+  },
+  "version_conventions": {
+    "semantic_versioning": {
+      "format": "MAJOR.MINOR.PATCH",
+      "rules": [
+        "MAJOR: Breaking changes",
+        "MINOR: New features, backwards compatible",
+        "PATCH: Bug fixes, backwards compatible"
+      ],
+      "examples": [
+        "1.0.0 - Initial release",
+        "1.1.0 - Add new feature",
+        "1.1.1 - Bug fix",
+        "2.0.0 - Breaking change"
+      ]
+    },
+    "version_locations": [
+      "marketplace.json (per plugin)",
+      "Agent frontmatter (optional)",
+      "README.md (plugin version section)"
+    ]
+  },
+  "git_conventions": {
+    "commit_messages": {
+      "format": "Descriptive sentence in present tense",
+      "examples": [
+        "Add context management plugin for Claude Code",
+        "Fix marketplace.json schema - author as object"
+      ],
+      "style": "Clear, concise, explains what and why"
+    },
+    "branch_strategy": {
+      "main_branch": "main",
+      "feature_branches": "Not currently used (direct commits to main)",
+      "release_tags": "Not yet implemented"
+    },
+    "ignored_files": {
+      "recommended": [
+        ".claude-context/ (for sensitive projects)",
+        ".DS_Store (macOS)",
+        "*.swp (vim swap files)"
+      ],
+      "current": "No .gitignore file present"
+    }
+  },
+  "security_conventions": {
+    "sensitive_data": {
+      "never_commit": [
+        "API keys",
+        "Passwords",
+        "Authentication tokens",
+        "AWS credentials",
+        "Database connection strings",
+        "Private keys",
+        "PII (personally identifiable information)"
+      ],
+      "safe_to_commit": [
+        "Configuration structure (without values)",
+        "Account numbers (if not sensitive)",
+        "Profile names",
+        "Example patterns and templates"
+      ]
+    },
+    "permission_patterns": {
+      "format": "Tool(operation:pattern)",
+      "examples": [
+        "WebFetch(domain:github.com)",
+        "Bash(tree:*)",
+        "Bash(git commit:*)"
+      ],
+      "wildcards": "Use * for any value"
+    }
+  },
+  "ui_conventions": {
+    "status_indicators": {
+      "success": "✓ or Success:",
+      "error": "✗ or Error:",
+      "warning": "⚠ or Warning:",
+      "info": "ℹ or Info:",
+      "in_progress": "⋯ or Processing:"
+    },
+    "formatting": {
+      "emphasis": {
+        "bold": "**important text**",
+        "italic": "*emphasis*",
+        "code": "`inline code`"
+      },
+      "structure": {
+        "tables": "Use for structured data comparison",
+        "lists": "Use for sequential items or options",
+        "code_blocks": "Use for commands and examples"
+      }
+    },
+    "command_output": {
+      "format": "Clear, formatted tables or lists",
+      "include": [
+        "Status indicators",
+        "Key information",
+        "Next steps or suggestions"
+      ],
+      "example": [
+        "AWS Profile Status",
+        "==================",
+        "",
+        "Profile       Status",
+        "------------------------",
+        "vc-nonprod    ✓ Valid",
+        "vc-sandbox    ⚠ Expired"
+      ]
+    }
+  },
+  "parameter_conventions": {
+    "command_parameters": {
+      "syntax": "{{arg}} for single argument",
+      "style": "Natural language, no strict parsing",
+      "validation": "Handled by Claude, not schema-based",
+      "examples": [
+        "/aws-auth nonprod",
+        "/context-save with minimal detail",
+        "/context-restore with focus on architecture"
+      ]
+    },
+    "agent_parameters": {
+      "implicit": "Parameters extracted from natural language",
+      "context": "Full conversation history available to agent",
+      "flexible": "No rigid parameter schema"
+    }
+  }
+}

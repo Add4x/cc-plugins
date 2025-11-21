@@ -1,0 +1,361 @@
+{
+  "patterns": [
+    {
+      "name": "Plugin Definition Pattern",
+      "category": "structure",
+      "description": "Standard structure for creating a new Claude Code plugin",
+      "context": "Used when creating any new plugin for the marketplace",
+      "structure": {
+        "directory": "plugin-name/",
+        "required_files": [
+          "README.md"
+        ],
+        "optional_directories": [
+          "agents/",
+          "commands/",
+          "skills/",
+          "hooks/"
+        ]
+      },
+      "example": {
+        "directory_structure": [
+          "my-plugin/",
+          "  agents/",
+          "    my-agent.md",
+          "  commands/",
+          "    my-command.md",
+          "  README.md"
+        ]
+      },
+      "files": [
+        "context-management/",
+        "aws-profile-manager/"
+      ]
+    },
+    {
+      "name": "Agent Definition Pattern",
+      "category": "agent-configuration",
+      "description": "Markdown file with YAML frontmatter defining a specialized AI agent",
+      "context": "Used to create agents with specific domain expertise",
+      "format": {
+        "file_extension": ".md",
+        "location": "plugin-name/agents/agent-name.md",
+        "structure": [
+          "--- (YAML frontmatter start)",
+          "name: agent-name",
+          "description: Brief description",
+          "model: haiku|sonnet|opus (optional)",
+          "version: 1.0.0 (optional)",
+          "--- (YAML frontmatter end)",
+          "",
+          "# Natural language instructions",
+          "Detailed behavioral instructions in markdown"
+        ]
+      },
+      "frontmatter_fields": {
+        "name": "required - Agent identifier used for invocation",
+        "description": "required - Brief summary of agent's purpose",
+        "model": "optional - Preferred Claude model (haiku, sonnet, opus)",
+        "version": "optional - Agent version number"
+      },
+      "content_sections": [
+        "Core expertise and responsibilities",
+        "Behavioral guidelines",
+        "Tool usage patterns",
+        "Response methodology",
+        "Example use cases"
+      ],
+      "examples": [
+        {
+          "file": "context-management/agents/context-manager.md",
+          "expertise": "Context engineering, vector databases, knowledge graphs",
+          "model": "haiku"
+        },
+        {
+          "file": "aws-profile-manager/agents/aws-profile-manager.md",
+          "expertise": "AWS credential management, ALKS CLI",
+          "model": "default"
+        }
+      ]
+    },
+    {
+      "name": "Command Definition Pattern",
+      "category": "command-configuration",
+      "description": "Markdown file defining a slash command that expands into instructions",
+      "context": "Used to create user-facing commands like /context-save",
+      "format": {
+        "file_extension": ".md",
+        "location": "plugin-name/commands/command-name.md",
+        "structure": [
+          "--- (YAML frontmatter start)",
+          "name: command-name",
+          "description: Brief description",
+          "model: haiku|sonnet|opus (optional)",
+          "--- (YAML frontmatter end)",
+          "",
+          "# Command instructions",
+          "Instructions that execute when command is invoked",
+          "Can include {{arg}} for parameters"
+        ]
+      },
+      "invocation": "/command-name [arguments]",
+      "parameter_syntax": {
+        "single_arg": "{{arg}}",
+        "description": "Replaced with user-provided argument when command runs"
+      },
+      "examples": [
+        {
+          "command": "/context-save",
+          "file": "context-management/commands/context-save.md",
+          "parameters": "Optional natural language parameters",
+          "purpose": "Extract and save project context"
+        },
+        {
+          "command": "/aws-auth nonprod",
+          "file": "aws-profile-manager/commands/aws-auth.md",
+          "parameters": "Profile name via {{arg}}",
+          "purpose": "Refresh AWS credentials for specific profile"
+        }
+      ]
+    },
+    {
+      "name": "Marketplace Registration Pattern",
+      "category": "distribution",
+      "description": "Register a plugin in the marketplace configuration",
+      "context": "Used after creating a new plugin to make it discoverable",
+      "file": ".claude-plugin/marketplace.json",
+      "schema": {
+        "name": "string - Plugin identifier (kebab-case)",
+        "description": "string - Brief plugin description",
+        "version": "string - Semantic version (MAJOR.MINOR.PATCH)",
+        "author": {
+          "name": "string - Author name",
+          "email": "string - Author email"
+        },
+        "source": "string - Relative path to plugin directory",
+        "keywords": "array - Searchable keywords"
+      },
+      "example": {
+        "name": "context-management",
+        "description": "Intelligent context management for any project",
+        "version": "1.0.0",
+        "author": {
+          "name": "Shyju Viswambaran",
+          "email": "shyju.viswambaran@coxautoinc.com"
+        },
+        "source": "./context-management",
+        "keywords": ["context", "knowledge-management", "memory"]
+      }
+    },
+    {
+      "name": "Model Selection Pattern",
+      "category": "performance-optimization",
+      "description": "Choose appropriate Claude model based on task complexity",
+      "context": "Used in agent and command frontmatter to optimize performance/cost",
+      "guidelines": {
+        "haiku": {
+          "use_when": [
+            "Simple, single-step operations",
+            "Status checks and queries",
+            "Fast responses required",
+            "Low complexity tasks"
+          ],
+          "characteristics": "Fast, cost-effective, good for straightforward tasks",
+          "examples": [
+            "aws-auth (single profile refresh)",
+            "aws-status (read and display status)",
+            "context-manager agent (structured data operations)"
+          ]
+        },
+        "sonnet": {
+          "use_when": [
+            "Multi-step operations",
+            "Complex reasoning required",
+            "Batch operations",
+            "Balanced performance needs"
+          ],
+          "characteristics": "Balanced speed/quality, handles complexity well",
+          "examples": [
+            "aws-auth-all (sequential multi-profile refresh)",
+            "Most general-purpose commands"
+          ]
+        },
+        "opus": {
+          "use_when": [
+            "Critical, high-stakes operations",
+            "Complex architectural decisions",
+            "Maximum quality required",
+            "Intricate multi-step reasoning"
+          ],
+          "characteristics": "Highest quality, slower, more expensive",
+          "examples": [
+            "Not currently used in this project"
+          ]
+        }
+      },
+      "default_behavior": "If no model specified, inherits from agent or uses global default"
+    },
+    {
+      "name": "Documentation Pattern",
+      "category": "documentation",
+      "description": "Comprehensive README.md for each plugin",
+      "context": "Required for every plugin to help users understand and use it",
+      "sections": [
+        "# Plugin Name - Title and brief description",
+        "## Overview - Purpose and capabilities",
+        "## Features - Bullet list of key features",
+        "## Installation - How to install from marketplace",
+        "## Components - List of agents and commands",
+        "## Usage Examples - Real-world scenarios with code",
+        "## Configuration - Available options and settings",
+        "## Best Practices - When and how to use effectively",
+        "## Troubleshooting - Common issues and solutions",
+        "## Contributing - How to enhance the plugin",
+        "## Support - Where to get help",
+        "## Version - Current version and status",
+        "## License - License information"
+      ],
+      "example_file": "context-management/README.md",
+      "characteristics": [
+        "Markdown format",
+        "Comprehensive examples",
+        "Clear installation steps",
+        "Security considerations",
+        "Configuration options explained"
+      ]
+    },
+    {
+      "name": "Permission Configuration Pattern",
+      "category": "security",
+      "description": "Define allowed operations without user prompts",
+      "context": "Used in .claude/settings.local.json to streamline workflows",
+      "file": ".claude/settings.local.json",
+      "structure": {
+        "permissions": {
+          "allow": "Array of operations that don't require user confirmation",
+          "deny": "Array of operations that are always blocked",
+          "ask": "Array of operations that require user confirmation"
+        }
+      },
+      "syntax": [
+        "WebFetch(domain:example.com) - Allow fetching from specific domain",
+        "Bash(tree:*) - Allow tree command with any arguments",
+        "Bash(curl:*) - Allow curl command with any arguments",
+        "Bash(git commit:*) - Allow git commit commands"
+      ],
+      "current_configuration": {
+        "allow": [
+          "WebFetch(domain:github.com)",
+          "WebFetch(domain:raw.githubusercontent.com)",
+          "WebFetch(domain:api.github.com)",
+          "Bash(tree:*)",
+          "Bash(curl:*)",
+          "Bash(git commit:*)"
+        ],
+        "deny": [],
+        "ask": []
+      }
+    },
+    {
+      "name": "Context Storage Pattern",
+      "category": "data-persistence",
+      "description": "Hierarchical directory structure for saved project context",
+      "context": "Created by /context-save command to store project knowledge",
+      "directory": ".claude-context/",
+      "structure": {
+        "metadata.json": "Project metadata and extraction info",
+        "architecture/": {
+          "overview.md": "High-level architecture",
+          "structure.md": "Project structure details",
+          "decisions.md": "Architectural decision records"
+        },
+        "patterns/": {
+          "code-patterns.json": "Discovered code patterns",
+          "conventions.json": "Naming and style conventions",
+          "workflows.json": "Development workflows"
+        },
+        "dependencies/": {
+          "external.json": "Third-party dependencies",
+          "internal.json": "Module relationships"
+        },
+        "knowledge/": {
+          "setup.md": "Getting started guide",
+          "troubleshooting.md": "Common issues and solutions"
+        }
+      },
+      "file_formats": {
+        "metadata": "JSON for structured data",
+        "documentation": "Markdown for human-readable content",
+        "patterns": "JSON for machine-parseable patterns",
+        "knowledge": "Markdown for articles and guides"
+      }
+    },
+    {
+      "name": "Error Handling Pattern",
+      "category": "user-experience",
+      "description": "Consistent error handling and user feedback in commands",
+      "context": "Used in command definitions to handle failures gracefully",
+      "components": [
+        "Validation - Check prerequisites before execution",
+        "Clear Error Messages - Explain what went wrong",
+        "Troubleshooting Steps - Suggest how to fix",
+        "Graceful Degradation - Continue with partial success if possible"
+      ],
+      "examples": [
+        {
+          "scenario": "ALKS CLI not installed",
+          "response": "Error: ALKS CLI not found\n→ Install from https://github.com/Cox-Automotive/alks-cli"
+        },
+        {
+          "scenario": "Invalid profile name",
+          "response": "Error: Unknown profile 'xyz'\n→ Available profiles: nonprod, sandbox, preprod, prod"
+        },
+        {
+          "scenario": "No saved context found",
+          "response": "⚠ No saved context found in .claude-context/\n→ Run /context-save first"
+        }
+      ],
+      "format": {
+        "error_prefix": "Error: or ✗",
+        "warning_prefix": "Warning: or ⚠",
+        "success_prefix": "✓ or Success:",
+        "suggestion_prefix": "→ or Suggestion:"
+      }
+    },
+    {
+      "name": "ALKS Integration Pattern",
+      "category": "external-integration",
+      "description": "Pattern for integrating with ALKS CLI for AWS credential management",
+      "context": "Used in aws-profile-manager plugin to refresh temporary credentials",
+      "command_format": "alks sessions open -a <account> -r <role> -o creds --profile <name> -f --newSession",
+      "parameters": {
+        "-a": "AWS account number",
+        "-r": "ALKS role (ALKSAdmin, ALKSReadOnly, ALKSPowerUser)",
+        "-o creds": "Output format for credentials",
+        "--profile": "Profile name to create/update",
+        "-f": "Force overwrite existing profile",
+        "--newSession": "Create new session"
+      },
+      "profile_mapping": {
+        "vc-nonprod": {
+          "account": "536228277869",
+          "role": "ALKSAdmin"
+        },
+        "vc-sandbox": {
+          "account": "240398786999",
+          "role": "ALKSReadOnly"
+        },
+        "vc-preprod": {
+          "account": "617995200517",
+          "role": "ALKSReadOnly"
+        },
+        "vc-prod": {
+          "account": "867828046507",
+          "role": "ALKSReadOnly"
+        }
+      },
+      "output_location": "~/.aws/credentials",
+      "credential_lifetime": "~12 hours (typical)"
+    }
+  ]
+}

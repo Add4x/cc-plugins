@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-11-21T14:04:00Z",
+  "project": {
+    "name": "cc-plugins",
+    "displayName": "Claude Code Plugins Marketplace",
+    "path": "/Users/shyju.viswambaran/backend/cc-plugins",
+    "type": "plugin-marketplace",
+    "description": "A marketplace of Claude Code plugins for enhanced development workflows"
+  },
+  "git": {
+    "commit": "efcba0a3a8826e4702b80c4200e5f57aa9aea4f6",
+    "branch": "main",
+    "remote": "git@ghe.coxautoinc.com:Shyju-Viswambaran/cc-plugins.git"
+  },
+  "extraction_version": "1.0.0",
+  "compression": "standard",
+  "plugins": [
+    {
+      "name": "context-management",
+      "version": "1.0.0",
+      "type": "knowledge-management",
+      "status": "active"
+    },
+    {
+      "name": "aws-profile-manager",
+      "version": "1.0.0",
+      "type": "aws-credentials",
+      "status": "in-development"
+    }
+  ]
+}

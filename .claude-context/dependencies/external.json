@@ -1,0 +1,156 @@
+{
+  "platform_dependencies": {
+    "claude_code": {
+      "type": "required",
+      "description": "Claude Code platform - required to run plugins",
+      "version": "Not specified",
+      "installation": "https://code.claude.com",
+      "purpose": "Provides plugin system, agents, commands, and tool access"
+    }
+  },
+  "tool_dependencies": {
+    "alks_cli": {
+      "type": "required_for_aws_plugin",
+      "description": "ALKS CLI - Account Link Key Service command-line tool",
+      "installation": "https://github.com/Cox-Automotive/alks-cli",
+      "purpose": "Refresh AWS temporary credentials via ALKS service",
+      "used_by": ["aws-profile-manager plugin"],
+      "commands_used": [
+        "alks sessions open"
+      ],
+      "version": "Not specified in configuration"
+    },
+    "git": {
+      "type": "required",
+      "description": "Git version control system",
+      "purpose": "Version control for marketplace and plugins",
+      "used_for": [
+        "Tracking changes",
+        "Marketplace distribution",
+        "Collaboration"
+      ],
+      "remote_repository": "git@ghe.coxautoinc.com:Shyju-Viswambaran/cc-plugins.git"
+    }
+  },
+  "aws_dependencies": {
+    "aws_cli": {
+      "type": "optional",
+      "description": "AWS Command Line Interface",
+      "purpose": "Used to interact with AWS services after credentials are refreshed",
+      "credentials_file": "~/.aws/credentials",
+      "managed_by": "ALKS CLI"
+    },
+    "aws_accounts": {
+      "type": "configuration",
+      "description": "Pre-configured AWS accounts for Vehicle Custody project",
+      "accounts": [
+        {
+          "name": "vc-nonprod",
+          "account_id": "536228277869",
+          "role": "ALKSAdmin",
+          "environment": "Non Production"
+        },
+        {
+          "name": "vc-sandbox",
+          "account_id": "240398786999",
+          "role": "ALKSReadOnly",
+          "environment": "Sandbox"
+        },
+        {
+          "name": "vc-preprod",
+          "account_id": "617995200517",
+          "role": "ALKSReadOnly",
+          "environment": "Pre Production"
+        },
+        {
+          "name": "vc-prod",
+          "account_id": "867828046507",
+          "role": "ALKSReadOnly",
+          "environment": "Production"
+        }
+      ]
+    }
+  },
+  "runtime_dependencies": {
+    "bash": {
+      "type": "required",
+      "description": "Bash shell for command execution",
+      "purpose": "Execute ALKS CLI commands, git operations, file operations",
+      "used_by": "All plugins via Bash tool"
+    },
+    "file_system": {
+      "type": "required",
+      "description": "Local file system access",
+      "purpose": "Read/write plugin files, context storage, AWS credentials",
+      "paths": [
+        "~/.aws/credentials (AWS credentials)",
+        ".claude-context/ (saved context)",
+        ".claude-plugin/ (marketplace config)",
+        ".claude/ (Claude Code settings)"
+      ]
+    }
+  },
+  "claude_models": {
+    "haiku": {
+      "type": "ai_model",
+      "description": "Claude Haiku - Fast, cost-effective model",
+      "used_for": "Simple operations, status checks, single-step commands",
+      "characteristics": "Fast, economical, good for straightforward tasks",
+      "used_by": [
+        "context-manager agent",
+        "aws-auth command",
+        "aws-status command"
+      ]
+    },
+    "sonnet": {
+      "type": "ai_model",
+      "description": "Claude Sonnet - Balanced model",
+      "used_for": "Complex reasoning, multi-step operations, batch processing",
+      "characteristics": "Balanced speed/quality, handles complexity",
+      "used_by": [
+        "aws-auth-all command"
+      ]
+    },
+    "opus": {
+      "type": "ai_model",
+      "description": "Claude Opus - Highest quality model",
+      "used_for": "Critical, high-stakes operations (not currently used)",
+      "characteristics": "Best quality, slower, more expensive",
+      "used_by": []
+    }
+  },
+  "no_package_dependencies": {
+    "note": "This project has no npm/pip/cargo dependencies",
+    "reason": "Plugins are markdown-based configuration, not code packages",
+    "language": "Natural language (Markdown) with embedded instructions",
+    "no_build_step": "No compilation or bundling required",
+    "no_package_json": "Not a Node.js project",
+    "no_requirements_txt": "Not a Python project",
+    "no_cargo_toml": "Not a Rust project"
+  },
+  "external_services": {
+    "alks_service": {
+      "type": "external_service",
+      "description": "ALKS (Account Link Key Service) authentication service",
+      "purpose": "Generate temporary AWS credentials",
+      "provider": "Cox Automotive",
+      "authentication": "Corporate credentials + MFA",
+      "used_by": ["aws-profile-manager plugin"]
+    },
+    "github_enterprise": {
+      "type": "code_hosting",
+      "description": "GitHub Enterprise for code hosting",
+      "url": "ghe.coxautoinc.com",
+      "repository": "Shyju-Viswambaran/cc-plugins",
+      "purpose": "Version control and collaboration"
+    }
+  },
+  "dependency_summary": {
+    "total_external_tools": 2,
+    "tools": ["ALKS CLI", "Git"],
+    "total_external_services": 2,
+    "services": ["ALKS Service", "GitHub Enterprise"],
+    "programming_dependencies": 0,
+    "reason": "Markdown-based configuration, no code dependencies"
+  }
+}

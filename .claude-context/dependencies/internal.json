@@ -1,0 +1,375 @@
+{
+  "plugin_relationships": {
+    "context-management": {
+      "depends_on": [],
+      "used_by": [],
+      "relationship_type": "independent",
+      "description": "Standalone plugin with no dependencies on other plugins"
+    },
+    "aws-profile-manager": {
+      "depends_on": [],
+      "used_by": [],
+      "relationship_type": "independent",
+      "description": "Standalone plugin with no dependencies on other plugins"
+    }
+  },
+  "component_relationships": {
+    "agents": {
+      "context-manager": {
+        "plugin": "context-management",
+        "invoked_by": [
+          "/context-save command",
+          "/context-restore command",
+          "Task tool (can be called directly)"
+        ],
+        "depends_on_tools": [
+          "Bash",
+          "Read",
+          "Write",
+          "Glob",
+          "Grep"
+        ],
+        "purpose": "Execute context extraction and restoration logic"
+      },
+      "aws-profile-manager": {
+        "plugin": "aws-profile-manager",
+        "invoked_by": [
+          "/aws-auth command",
+          "/aws-auth-all command",
+          "/aws-status command",
+          "/aws-switch command",
+          "/aws-accounts command"
+        ],
+        "depends_on_tools": [
+          "Bash (for ALKS CLI)",
+          "Read (for ~/.aws/credentials)"
+        ],
+        "purpose": "Execute AWS credential management operations"
+      }
+    },
+    "commands": {
+      "context-save": {
+        "plugin": "context-management",
+        "depends_on": [
+          "context-manager agent (implied)"
+        ],
+        "invokes": [
+          "Project discovery tools (Glob, Grep, Read)",
+          "File write operations",
+          "Git operations"
+        ],
+        "output": ".claude-context/ directory structure",
+        "relationship": "Command expands instructions, agent executes"
+      },
+      "context-restore": {
+        "plugin": "context-management",
+        "depends_on": [
+          "context-manager agent (implied)",
+          ".claude-context/ directory (must exist)"
+        ],
+        "reads_from": [
+          ".claude-context/metadata.json",
+          ".claude-context/architecture/",
+          ".claude-context/patterns/",
+          ".claude-context/dependencies/",
+          ".claude-context/knowledge/"
+        ],
+        "relationship": "Reads saved context and presents to user"
+      },
+      "aws-auth": {
+        "plugin": "aws-profile-manager",
+        "depends_on": [
+          "aws-profile-manager agent",
+          "ALKS CLI (external)"
+        ],
+        "modifies": [
+          "~/.aws/credentials file"
+        ],
+        "parameters": [
+          "profile name (nonprod, sandbox, preprod, prod)"
+        ]
+      },
+      "aws-auth-all": {
+        "plugin": "aws-profile-manager",
+        "depends_on": [
+          "aws-profile-manager agent",
+          "ALKS CLI (external)"
+        ],
+        "calls": [
+          "Sequential ALKS CLI commands for all profiles"
+        ],
+        "modifies": [
+          "~/.aws/credentials file (all profiles)"
+        ]
+      },
+      "aws-status": {
+        "plugin": "aws-profile-manager",
+        "depends_on": [
+          "aws-profile-manager agent"
+        ],
+        "reads_from": [
+          "~/.aws/credentials",
+          "AWS_PROFILE environment variable"
+        ],
+        "output": "Status table of all profiles"
+      },
+      "aws-switch": {
+        "plugin": "aws-profile-manager",
+        "depends_on": [
+          "aws-profile-manager agent"
+        ],
+        "modifies": [
+          "AWS_PROFILE environment variable"
+        ],
+        "parameters": [
+          "profile name"
+        ]
+      },
+      "aws-accounts": {
+        "plugin": "aws-profile-manager",
+        "depends_on": [
+          "aws-profile-manager agent"
+        ],
+        "reads_from": [
+          "Hardcoded account configuration in agent definition"
+        ],
+        "output": "Reference table of accounts"
+      }
+    }
+  },
+  "configuration_relationships": {
+    "marketplace_json": {
+      "file": ".claude-plugin/marketplace.json",
+      "references": [
+        {
+          "plugin": "context-management",
+          "source_path": "./context-management"
+        }
+      ],
+      "note": "aws-profile-manager not yet registered in marketplace.json",
+      "relationship": "Registry of available plugins, points to plugin directories"
+    },
+    "settings_local_json": {
+      "file": ".claude/settings.local.json",
+      "affects": [
+        "All plugin operations",
+        "Tool permission requirements"
+      ],
+      "relationship": "Defines which operations can execute without user prompts"
+    }
+  },
+  "data_flow": {
+    "context_save_flow": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "User invokes /context-save",
+          "component": "context-save command"
+        },
+        {
+          "step": 2,
+          "action": "Command expands to detailed instructions",
+          "component": "Claude Code command system"
+        },
+        {
+          "step": 3,
+          "action": "Agent executes discovery",
+          "component": "context-manager agent",
+          "tools_used": ["Glob", "Grep", "Read", "Bash"]
+        },
+        {
+          "step": 4,
+          "action": "Extract patterns and architecture",
+          "component": "context-manager agent",
+          "analysis": "Project structure, conventions, dependencies"
+        },
+        {
+          "step": 5,
+          "action": "Generate context files",
+          "component": "context-manager agent",
+          "tools_used": ["Write"],
+          "output": ".claude-context/ directory"
+        },
+        {
+          "step": 6,
+          "action": "Report completion to user",
+          "output": "Summary of captured context"
+        }
+      ]
+    },
+    "context_restore_flow": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "User invokes /context-restore",
+          "component": "context-restore command"
+        },
+        {
+          "step": 2,
+          "action": "Command expands to restoration instructions",
+          "component": "Claude Code command system"
+        },
+        {
+          "step": 3,
+          "action": "Agent reads saved context",
+          "component": "context-manager agent",
+          "tools_used": ["Read"],
+          "reads_from": ".claude-context/ directory"
+        },
+        {
+          "step": 4,
+          "action": "Load and prioritize context",
+          "component": "context-manager agent",
+          "logic": "Apply token budget, relevance filtering, focus area"
+        },
+        {
+          "step": 5,
+          "action": "Present context to user",
+          "output": "Architecture, patterns, conventions loaded into session"
+        }
+      ]
+    },
+    "aws_auth_flow": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "User invokes /aws-auth <profile>",
+          "component": "aws-auth command"
+        },
+        {
+          "step": 2,
+          "action": "Command expands with profile parameter",
+          "component": "Claude Code command system",
+          "parameter": "{{arg}} replaced with profile name"
+        },
+        {
+          "step": 3,
+          "action": "Agent validates profile name",
+          "component": "aws-profile-manager agent"
+        },
+        {
+          "step": 4,
+          "action": "Map profile to account and role",
+          "component": "aws-profile-manager agent",
+          "source": "Hardcoded configuration in agent"
+        },
+        {
+          "step": 5,
+          "action": "Execute ALKS CLI command",
+          "component": "aws-profile-manager agent",
+          "tools_used": ["Bash"],
+          "command": "alks sessions open"
+        },
+        {
+          "step": 6,
+          "action": "ALKS writes credentials",
+          "target": "~/.aws/credentials",
+          "external": "ALKS CLI"
+        },
+        {
+          "step": 7,
+          "action": "Report result to user",
+          "output": "Success/failure with expiration time"
+        }
+      ]
+    }
+  },
+  "file_dependencies": {
+    "agents_depend_on": [
+      "Claude Code tool system",
+      "Markdown parsing",
+      "YAML frontmatter parsing"
+    ],
+    "commands_depend_on": [
+      "Claude Code command system",
+      "Markdown parsing",
+      "YAML frontmatter parsing",
+      "Parameter substitution ({{arg}})"
+    ],
+    "context_files_depend_on": [
+      "File system access",
+      "JSON parsing (metadata, patterns)",
+      "Markdown rendering (architecture, knowledge)"
+    ],
+    "aws_operations_depend_on": [
+      "~/.aws/credentials file existence",
+      "ALKS CLI installation",
+      "Network access to ALKS service"
+    ]
+  },
+  "shared_resources": {
+    "file_system_paths": {
+      ".claude-plugin/": {
+        "shared_by": ["All plugins (registration)"],
+        "purpose": "Central marketplace configuration"
+      },
+      ".claude/": {
+        "shared_by": ["All plugins (permissions)"],
+        "purpose": "Claude Code settings"
+      },
+      ".claude-context/": {
+        "owned_by": "context-management plugin",
+        "accessed_by": "context-save and context-restore commands"
+      },
+      "~/.aws/credentials": {
+        "owned_by": "AWS CLI / ALKS CLI",
+        "accessed_by": "aws-profile-manager plugin",
+        "shared_with": "AWS CLI, SDKs"
+      }
+    },
+    "environment_variables": {
+      "AWS_PROFILE": {
+        "set_by": "aws-switch command or user manually",
+        "read_by": ["AWS CLI", "AWS SDKs", "aws-status command"],
+        "purpose": "Specify active AWS profile"
+      }
+    }
+  },
+  "no_circular_dependencies": {
+    "note": "Plugins are independent with no circular dependencies",
+    "validation": "Each plugin can be installed and used without the other",
+    "isolation": "Complete plugin isolation maintained"
+  },
+  "dependency_graph": {
+    "marketplace_root": {
+      "contains": [
+        "context-management plugin",
+        "aws-profile-manager plugin"
+      ],
+      "relationship": "Parent directory, no runtime dependency"
+    },
+    "context-management": {
+      "agents": ["context-manager"],
+      "commands": ["context-save", "context-restore"],
+      "depends_on": ["Claude Code platform"],
+      "external_deps": []
+    },
+    "aws-profile-manager": {
+      "agents": ["aws-profile-manager"],
+      "commands": ["aws-auth", "aws-auth-all", "aws-status", "aws-switch", "aws-accounts"],
+      "depends_on": ["Claude Code platform"],
+      "external_deps": ["ALKS CLI", "AWS credentials file"]
+    }
+  },
+  "integration_points": {
+    "claude_code_tools": {
+      "description": "Plugins integrate via Claude Code's tool system",
+      "tools_used": [
+        "Bash - Execute shell commands",
+        "Read - Read files",
+        "Write - Create/overwrite files",
+        "Edit - Modify existing files",
+        "Glob - Find files by pattern",
+        "Grep - Search file contents",
+        "Task - Invoke specialized agents"
+      ],
+      "relationship": "Plugins use tools, don't implement them"
+    },
+    "user_interface": {
+      "description": "Plugins integrate via slash commands",
+      "invocation": "User types /command-name in Claude Code",
+      "expansion": "Command markdown expands into instructions",
+      "execution": "Claude follows expanded instructions"
+    }
+  }
+}
