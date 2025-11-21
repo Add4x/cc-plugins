@@ -1,7 +1,6 @@
 ---
 name: aws-auth-all
 description: Refresh AWS credentials for all configured profiles via ALKS
-model: sonnet
 ---
 
 Refresh AWS temporary credentials for ALL configured profiles using ALKS CLI.

@@ -1,7 +1,6 @@
 ---
 name: aws-status
 description: Show status of all AWS profiles including expiration and current active profile
-model: haiku
 ---
 
 Display the status of all AWS profiles configured for Vehicle Custody accounts.

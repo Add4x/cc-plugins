@@ -1,7 +1,6 @@
 ---
 name: aws-switch
 description: Switch active AWS profile by setting AWS_PROFILE environment variable
-model: haiku
 ---
 
 Switch the active AWS profile by setting the AWS_PROFILE environment variable.

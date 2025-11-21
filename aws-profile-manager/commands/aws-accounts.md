@@ -1,7 +1,6 @@
 ---
 name: aws-accounts
 description: Display reference table of all AWS accounts and profile mappings
-model: haiku
 ---
 
 Display a quick reference table of all configured AWS accounts and their profile mappings.

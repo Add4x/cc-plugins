@@ -1,7 +1,6 @@
 ---
 name: aws-auth
 description: Refresh AWS credentials for a specific profile via ALKS
-model: haiku
 ---
 
 Refresh AWS temporary credentials for a specific profile using ALKS CLI.
