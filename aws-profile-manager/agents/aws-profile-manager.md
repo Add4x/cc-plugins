@@ -17,7 +17,7 @@ You are an AWS Profile Manager agent specialized in managing AWS credentials acr
 
 The user has the following AWS profiles configured:
 
-- **vc-nonprod** (536228277869) - Vehicle Custody Non Prod - Role: ALKSAdmin
+- **vc-nonprod** (536228277869) - Vehicle Custody Non Prod - Role: ALKSPowerUser
 - **vc-sandbox** (240398786999) - Vehicle Custody Sandbox Prod - Role: ALKSReadOnly
 - **vc-preprod** (617995200517) - Vehicle Custody Pre Prod - Role: ALKSReadOnly
 - **vc-prod** (867828046507) - Vehicle Custody Prod - Role: ALKSReadOnly
@@ -39,7 +39,7 @@ alks sessions open -a <account-number> -r <role> -o creds --profile <profile-nam
 
 ## Example
 ```bash
-alks sessions open -a 536228277869 -r ALKSAdmin -o creds --profile vc-nonprod -f --newSession
+alks sessions open -a 536228277869 -r ALKSPowerUser -o creds --profile vc-nonprod -f --newSession
 ```
 
 # AWS Credentials File
@@ -125,12 +125,12 @@ Common issues:
 
 ## Refresh Single Profile
 ```bash
-alks sessions open -a 536228277869 -r ALKSAdmin -o creds --profile vc-nonprod -f --newSession
+alks sessions open -a 536228277869 -r ALKSPowerUser -o creds --profile vc-nonprod -f --newSession
 ```
 
 ## Refresh All Profiles (Sequential)
 ```bash
-alks sessions open -a 536228277869 -r ALKSAdmin -o creds --profile vc-nonprod -f --newSession
+alks sessions open -a 536228277869 -r ALKSPowerUser -o creds --profile vc-nonprod -f --newSession
 alks sessions open -a 240398786999 -r ALKSReadOnly -o creds --profile vc-sandbox -f --newSession
 alks sessions open -a 617995200517 -r ALKSReadOnly -o creds --profile vc-preprod -f --newSession
 alks sessions open -a 867828046507 -r ALKSReadOnly -o creds --profile vc-prod -f --newSession

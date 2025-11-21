@@ -64,7 +64,7 @@ The default configuration includes Vehicle Custody accounts:
 
 | Profile | Account | Role | Access |
 |---------|---------|------|--------|
-| vc-nonprod | 536228277869 | ALKSAdmin | Full Admin |
+| vc-nonprod | 536228277869 | ALKSPowerUser | Power User |
 | vc-sandbox | 240398786999 | ALKSReadOnly | Read Only |
 | vc-preprod | 617995200517 | ALKSReadOnly | Read Only |
 | vc-prod | 867828046507 | ALKSReadOnly | Read Only |
@@ -78,7 +78,7 @@ Edit `agents/aws-profile-manager.md` to configure your own accounts:
 
 The user has the following AWS profiles configured:
 
-- **my-dev** (123456789012) - Development - Role: ALKSAdmin
+- **my-dev** (123456789012) - Development - Role: ALKSPowerUser
 - **my-prod** (987654321098) - Production - Role: ALKSReadOnly
 ```
 
@@ -103,7 +103,7 @@ Refresh credentials for a specific profile.
 $ /aws-auth nonprod
 
 ✓ Successfully refreshed credentials for vc-nonprod (536228277869)
-  Role: ALKSAdmin
+  Role: ALKSPowerUser
   Credentials will expire in ~12 hours
 
 To use this profile: export AWS_PROFILE=vc-nonprod
@@ -128,7 +128,7 @@ Refreshing all Vehicle Custody AWS profiles...
 
 Profile       Account         Role            Status
 ---------------------------------------------------------
-vc-nonprod    536228277869    ALKSAdmin       ✓ Success
+vc-nonprod    536228277869    ALKSPowerUser   ✓ Success
 vc-sandbox    240398786999    ALKSReadOnly    ✓ Success
 vc-preprod    617995200517    ALKSReadOnly    ✓ Success
 vc-prod       867828046507    ALKSReadOnly    ✓ Success
@@ -164,7 +164,7 @@ Current Active Profile: vc-nonprod (via AWS_PROFILE)
 
 Profile       Account         Role            Status
 -------------------------------------------------------------------------
-vc-nonprod    536228277869    ALKSAdmin       ✓ Valid
+vc-nonprod    536228277869    ALKSPowerUser   ✓ Valid
 vc-sandbox    240398786999    ALKSReadOnly    ✓ Valid
 vc-preprod    617995200517    ALKSReadOnly    ⚠ Expired
 vc-prod       867828046507    ALKSReadOnly    ✗ Missing
@@ -223,7 +223,7 @@ Vehicle Custody AWS Accounts Reference
 
 Profile       Account Number   Environment        Role            Access Level
 --------------------------------------------------------------------------------
-vc-nonprod    536228277869    Non Production     ALKSAdmin       Full Admin
+vc-nonprod    536228277869    Non Production     ALKSPowerUser   Power User
 vc-sandbox    240398786999    Sandbox/Prod       ALKSReadOnly    Read Only
 vc-preprod    617995200517    Pre Production     ALKSReadOnly    Read Only
 vc-prod       867828046507    Production         ALKSReadOnly    Read Only
