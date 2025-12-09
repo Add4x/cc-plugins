@@ -1,0 +1,24 @@
+{
+  "name": "context-management",
+  "version": "1.0.0",
+  "description": "Intelligent context management for any project - captures and restores knowledge, architecture, and patterns",
+  "author": {
+    "name": "Shyju Viswambaran",
+    "email": "shyju.viswambaran@coxautoinc.com"
+  },
+  "keywords": [
+    "context",
+    "knowledge-management",
+    "memory",
+    "architecture",
+    "patterns"
+  ],
+  "category": "productivity",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cc-plugins"
+  },
+  "commands": "./commands",
+  "agents": "./agents"
+}

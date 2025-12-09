@@ -27,6 +27,17 @@
       },
       "source": "./aws-profile-manager",
       "keywords": ["aws", "alks", "credentials", "multi-account", "devops"]
+    },
+    {
+      "name": "nextjs-frontend-dev",
+      "description": "Comprehensive Next.js frontend development patterns with TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, and Zustand - includes intelligent code generation and best practices",
+      "version": "1.0.0",
+      "author": {
+        "name": "Shyju Viswambaran",
+        "email": "shyju.viswambaran@coxautoinc.com"
+      },
+      "source": "./nextjs-frontend-dev",
+      "keywords": ["nextjs", "react", "typescript", "tailwind", "shadcn", "frontend", "tanstack-query", "zustand", "web-development"]
     }
   ]
 }

@@ -42,6 +42,31 @@ Manage AWS credentials across multiple accounts using ALKS with named profiles f
 
 [View full documentation](./aws-profile-manager/README.md)
 
+### ⚛️ [Next.js Frontend Development](./nextjs-frontend-dev/)
+
+Comprehensive Next.js development patterns with TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, and Zustand.
+
+**Features:**
+- Modern Next.js App Router patterns (Server & Client Components)
+- TypeScript best practices with strict mode
+- Tailwind CSS v4 with `cn()` utility pattern
+- shadcn/ui component library integration
+- TanStack Query for data fetching
+- Zustand for state management
+- Code generation scripts for rapid development
+- Comprehensive templates and examples
+
+**Scripts:**
+- `new-component.sh` - Generate React components with tests
+- `new-api-route.sh` - Create API routes with validation
+- `new-store.sh` - Build Zustand stores with persistence
+- `new-hook.sh` - Create custom hooks (query, mutation, state)
+
+**Skills:**
+- `nextjs-patterns` - Comprehensive development patterns and decision trees
+
+[View full documentation](./nextjs-frontend-dev/README.md)
+
 ## Installation
 
 ### Add This Marketplace
@@ -60,6 +85,9 @@ Manage AWS credentials across multiple accounts using ALKS with named profiles f
 # Install AWS profile manager plugin
 /plugin install aws-profile-manager@development-plugins-marketplace
 
+# Install Next.js frontend development plugin
+/plugin install nextjs-frontend-dev@development-plugins-marketplace
+
 # Verify installation
 /plugin list
 ```
@@ -69,7 +97,7 @@ Manage AWS credentials across multiple accounts using ALKS with named profiles f
 ```
 cc-plugins/
 ├── .claude-plugin/
-│   └── marketplace.json        # Marketplace configuration
+│   └── marketplace.json         # Marketplace configuration
 ├── context-management/          # Context management plugin
 │   ├── agents/
 │   ├── commands/
@@ -78,7 +106,13 @@ cc-plugins/
 │   ├── agents/
 │   ├── commands/
 │   └── README.md
-└── [future-plugins]/            # Additional plugins coming soon
+├── nextjs-frontend-dev/         # Next.js frontend development plugin
+│   ├── skills/
+│   │   └── nextjs-patterns/    # Comprehensive Next.js patterns
+│   ├── scripts/                # Code generation scripts
+│   ├── templates/              # Component and code templates
+│   └── README.md
+└── [future-plugins]/           # Additional plugins coming soon
 ```
 
 ## Adding New Plugins
@@ -171,5 +205,5 @@ For issues or questions:
 ---
 
 **Current Version**: 1.0.0
-**Plugins**: 2
+**Plugins**: 3
 **Status**: Active Development

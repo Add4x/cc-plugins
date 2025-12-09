@@ -1,0 +1,104 @@
+{
+  "name": "nextjs-frontend-dev",
+  "displayName": "Next.js Frontend Development",
+  "version": "1.0.0",
+  "description": "Comprehensive Next.js frontend development patterns with TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, and Zustand - includes intelligent code generation and best practices",
+  "author": {
+    "name": "Shyju Viswambaran",
+    "email": "shyju.viswambaran@coxautoinc.com"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "tailwind",
+    "shadcn",
+    "frontend",
+    "tanstack-query",
+    "zustand",
+    "web-development"
+  ],
+  "category": "development",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cc-plugins"
+  },
+  "documentation": "./README.md",
+  "skills": [
+    {
+      "name": "nextjs-patterns",
+      "path": "./skills/nextjs-patterns",
+      "description": "Modern Next.js development patterns and best practices"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "new-component",
+      "path": "./scripts/new-component.sh",
+      "description": "Generate a new React component with TypeScript and tests"
+    },
+    {
+      "name": "new-api-route",
+      "path": "./scripts/new-api-route.sh",
+      "description": "Generate a new Next.js API route with validation and tests"
+    },
+    {
+      "name": "new-store",
+      "path": "./scripts/new-store.sh",
+      "description": "Generate a new Zustand store with TypeScript and persistence"
+    },
+    {
+      "name": "new-hook",
+      "path": "./scripts/new-hook.sh",
+      "description": "Generate a custom React hook with TanStack Query integration"
+    }
+  ],
+  "templates": [
+    {
+      "name": "component",
+      "path": "./templates/component.tsx",
+      "description": "Server component template"
+    },
+    {
+      "name": "client-component",
+      "path": "./templates/client-component.tsx",
+      "description": "Client component template with state"
+    },
+    {
+      "name": "api-route",
+      "path": "./templates/api-route.ts",
+      "description": "API route template with Zod validation"
+    },
+    {
+      "name": "query-hook",
+      "path": "./templates/query-hook.ts",
+      "description": "TanStack Query hook template"
+    },
+    {
+      "name": "zustand-store",
+      "path": "./templates/zustand-store.ts",
+      "description": "Zustand store template with persistence"
+    }
+  ],
+  "requirements": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0",
+    "typescript": ">=5.0.0"
+  },
+  "installation": {
+    "dependencies": [
+      "@tanstack/react-query",
+      "zustand",
+      "zod",
+      "class-variance-authority",
+      "clsx",
+      "tailwind-merge"
+    ],
+    "devDependencies": [
+      "vitest",
+      "@testing-library/react",
+      "tailwindcss"
+    ]
+  }
+}

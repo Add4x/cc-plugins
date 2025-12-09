@@ -1,0 +1,24 @@
+{
+  "name": "aws-profile-manager",
+  "version": "1.0.0",
+  "description": "Manage AWS credentials across multiple accounts using ALKS with named profiles for simultaneous access",
+  "author": {
+    "name": "Shyju Viswambaran",
+    "email": "shyju.viswambaran@coxautoinc.com"
+  },
+  "keywords": [
+    "aws",
+    "alks",
+    "credentials",
+    "multi-account",
+    "devops"
+  ],
+  "category": "devops",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cc-plugins"
+  },
+  "commands": "./commands",
+  "agents": "./agents"
+}
