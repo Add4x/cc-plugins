@@ -25,6 +25,7 @@
     "url": "https://github.com/yourusername/cc-plugins"
   },
   "documentation": "./README.md",
+  "agents": "./agents",
   "skills": [
     {
       "name": "nextjs-patterns",

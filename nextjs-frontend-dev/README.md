@@ -19,6 +19,9 @@ This plugin helps Claude generate consistent, production-ready Next.js code foll
   - API route patterns
   - Testing strategies
 
+### 🤖 Agent
+- **nextjs-architect**: Expert Next.js frontend architect for architecture decisions, code review, and best practices guidance
+
 ### 🛠️ Scripts
 - **new-component.sh**: Generate React components with tests
 - **new-api-route.sh**: Create API routes with validation
@@ -156,6 +159,41 @@ All scripts are located in `scripts/` and are executable shell scripts.
 - `query` - TanStack Query useQuery hook
 - `mutation` - TanStack Query useMutation hook
 - `state` - Custom state management hook
+
+### Using the Agent
+
+#### `/nextjs-architect`
+
+Specialized agent for Next.js frontend architecture decisions and guidance.
+
+```
+/nextjs-architect
+
+# Use this agent for:
+# - Architecture planning
+# - Component design decisions
+# - State management strategy
+# - Performance optimization
+# - Code review with detailed feedback
+# - Best practices guidance
+
+# Examples:
+"Help me design the architecture for a restaurant ordering system"
+"Review my component structure and suggest improvements"
+"What's the best way to handle shopping cart state?"
+```
+
+The architect agent has deep expertise in:
+- Next.js App Router patterns
+- Server vs Client Component decisions
+- TypeScript strict mode
+- Tailwind CSS v4 + cn() utility
+- shadcn/ui component patterns
+- TanStack Query data fetching
+- Zustand state management
+- Testing strategies
+
+The agent references the **nextjs-patterns skill** automatically for consistent guidance.
 
 ## Technology Stack
 
