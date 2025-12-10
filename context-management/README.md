@@ -205,6 +205,113 @@ cd /project-b
 # Loads only essential architecture and key patterns
 ```
 
+### Example 7: Context Update Workflow
+
+```bash
+# Initial save when starting project
+cd /path/to/project
+/context-save
+
+# Output: 🎯 Context saved successfully (first time)
+# Summary: 87 files analyzed, 23 patterns extracted
+
+# ... work on project for a few days ...
+
+# Resume work after break
+/context-restore
+
+# Output shows staleness:
+# ⚠ Context is stale (3 days old, 12 commits since)
+# I recommend refreshing the context first.
+# Options:
+# 1. Update now (recommended)
+# 2. Proceed with stale context
+# 3. Show what changed
+
+# Choose option 1
+1
+
+# → /context-save runs automatically
+# Output: 🔄 Context updated successfully
+# Changes: 15 files, 3 new patterns
+
+# Context refreshed, continue working with up-to-date information
+```
+
+### Example 8: Incremental Updates
+
+```bash
+# After making significant changes
+/context-save
+
+# Output shows it's an update, not initial save:
+# 🔄 Context Update Started
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Previous: 2 days ago (commit: abc123d)
+# Changes: 15 files, 8 commits
+#
+# ✓ Context updated successfully
+#
+# Summary of Changes:
+# - Files changed: 15 (analyzed incrementally)
+# - New patterns: 3
+# - Updated dependencies: 2
+# - Time since last save: 2 days, 3 hours
+# - Size: 31KB → 34KB
+#
+# Changed areas:
+# - ✓ Architecture: Updated (new service added)
+# - ✓ Patterns: 3 new patterns detected
+# - ✓ Dependencies: 2 package updates
+# - ○ Knowledge: No changes
+
+# Incremental update completed in ~15 seconds (vs 60 seconds for full save)
+```
+
+### Example 9: Custom Staleness Thresholds
+
+```bash
+# Configure staleness thresholds for your workflow
+# Edit .claude-context/metadata.json
+
+# For fast-paced development (warn after 12 hours or 3 commits):
+{
+  "staleness": {
+    "thresholds": {
+      "warnAfterHours": 12,
+      "warnAfterCommits": 3
+    },
+    "autoPrompt": true
+  }
+}
+
+# For stable project (warn after 1 week or 20 commits):
+{
+  "staleness": {
+    "thresholds": {
+      "warnAfterHours": 168,
+      "warnAfterCommits": 20
+    },
+    "autoPrompt": true
+  }
+}
+
+# To disable automatic prompts (only show warnings):
+{
+  "staleness": {
+    "thresholds": {
+      "warnAfterHours": 24,
+      "warnAfterCommits": 5
+    },
+    "autoPrompt": false
+  }
+}
+
+# Now /context-restore will use your custom thresholds
+/context-restore
+# ✓ Context is current (based on your thresholds)
+```
+
 ## Context Storage Structure
 
 When you run `/context-save`, context is organized as:
@@ -245,6 +352,31 @@ When you run `/context-save`, context is organized as:
 - When context is already fresh
 - During active debugging sessions
 
+### When to Update Context
+
+**Important**: Just run `/context-save` again to update your existing context!
+
+✅ **Do update context:**
+- After major feature completion
+- Before switching to another project
+- When staleness warning appears during `/context-restore`
+- After architectural refactoring
+- Weekly for active projects
+- After significant dependency updates
+
+❌ **Don't update context:**
+- After every single commit
+- During active development session
+- When context is less than 24 hours old (unless major changes)
+- For minor formatting or documentation changes
+- Multiple times in the same session
+
+**How it works:**
+- The plugin automatically detects if context exists
+- Initial save: Complete analysis of entire project
+- Update: Incremental analysis of only changed files (2-3x faster)
+- Shows exactly what changed since last save
+
 ### When to Restore Context
 
 ✅ **Do restore context:**
@@ -258,6 +390,31 @@ When you run `/context-save`, context is organized as:
 - When you already have full context
 - For trivial changes
 - When context is still in working memory
+
+### Staleness Management
+
+**Automatic Detection:**
+- Context restore automatically checks staleness
+- Warns after 24 hours OR 5 commits by default (configurable)
+- Prompts to refresh when context is stale
+- Shows exactly what changed since last save
+
+**Response Options:**
+1. **Update now**: Recommended when significant changes detected
+2. **Proceed anyway**: For quick reference when you know context
+3. **Show changes**: Review git diff before deciding
+
+**Manual Refresh:**
+- Run `/context-save` anytime to refresh
+- Shows exactly what changed since last save
+- Incremental update is fast (10-30 seconds typically)
+- Updates only changed patterns and files
+
+**Threshold Customization:**
+- Edit `staleness` settings in `.claude-context/metadata.json`
+- Adjust `warnAfterHours` for your team's pace
+- Adjust `warnAfterCommits` based on commit frequency
+- Set `autoPrompt: false` to disable automatic prompts (shows warnings only)
 
 ### Security Guidelines
 

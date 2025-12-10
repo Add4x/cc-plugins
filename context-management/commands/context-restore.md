@@ -17,13 +17,223 @@ Restore previously saved context to enable:
 
 ## Restoration Process
 
-### 1. Context Source Discovery
+### 1. Context Source Discovery and Immediate Staleness Check
 
-Locate saved context in `.claude-context/` directory:
-- Verify metadata.json exists and is valid
-- Check context freshness (timestamp)
-- Assess context completeness
-- Validate file integrity
+**IMPORTANT**: Before loading any context, immediately check for staleness and prompt user if needed.
+
+#### Step 1: Verify Context Exists
+
+```bash
+# Check if context directory and metadata exist
+if [ ! -f ".claude-context/metadata.json" ]; then
+  echo "⚠ No saved context found in .claude-context/"
+  echo "→ Run /context-save first to capture project context"
+  exit 1
+fi
+
+# Validate metadata is valid JSON
+if ! jq empty .claude-context/metadata.json 2>/dev/null; then
+  echo "✗ Context metadata is corrupted"
+  echo "→ Delete .claude-context/ and run /context-save to regenerate"
+  exit 1
+fi
+```
+
+#### Step 2: Calculate Staleness Metrics
+
+```bash
+# Load metadata
+SAVE_TIMESTAMP=$(jq -r '.timestamp' .claude-context/metadata.json)
+SAVED_COMMIT=$(jq -r '.git.commit' .claude-context/metadata.json)
+SAVED_VERSION=$(jq -r '.version // "1.0.0"' .claude-context/metadata.json)
+
+# Get current state
+CURRENT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "no-git")
+CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Calculate time-based staleness
+SAVE_DATE=$(date -d "$SAVE_TIMESTAMP" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$SAVE_TIMESTAMP" +%s)
+CURRENT_DATE=$(date +%s)
+SECONDS_SINCE=$((CURRENT_DATE - SAVE_DATE))
+HOURS_SINCE=$((SECONDS_SINCE / 3600))
+DAYS_SINCE=$((HOURS_SINCE / 24))
+
+# Calculate commit-based staleness (if git available)
+if [ "$CURRENT_COMMIT" != "no-git" ] && [ "$SAVED_COMMIT" != "null" ]; then
+  COMMITS_SINCE=$(git rev-list ${SAVED_COMMIT}..${CURRENT_COMMIT} --count 2>/dev/null || echo "0")
+  CHANGED_FILES=$(git diff --name-only ${SAVED_COMMIT}..${CURRENT_COMMIT} 2>/dev/null | wc -l)
+else
+  COMMITS_SINCE="unknown"
+  CHANGED_FILES="unknown"
+fi
+
+# Get staleness thresholds from metadata (with defaults)
+WARN_HOURS=$(jq -r '.staleness.thresholds.warnAfterHours // 24' .claude-context/metadata.json)
+WARN_COMMITS=$(jq -r '.staleness.thresholds.warnAfterCommits // 5' .claude-context/metadata.json)
+AUTO_PROMPT=$(jq -r '.staleness.autoPrompt // true' .claude-context/metadata.json)
+```
+
+#### Step 3: Determine Staleness Level
+
+```bash
+IS_STALE=false
+STALENESS_LEVEL="fresh"
+
+# Check if exceeds thresholds
+if [ "$COMMITS_SINCE" != "unknown" ] && [ $COMMITS_SINCE -gt $WARN_COMMITS ]; then
+  IS_STALE=true
+fi
+
+if [ $HOURS_SINCE -gt $WARN_HOURS ]; then
+  IS_STALE=true
+fi
+
+# Classify staleness severity
+if [ "$IS_STALE" = true ]; then
+  if [ $DAYS_SINCE -gt 7 ] || [ "$COMMITS_SINCE" != "unknown" -a $COMMITS_SINCE -gt 20 ]; then
+    STALENESS_LEVEL="very-stale"
+  else
+    STALENESS_LEVEL="stale"
+  fi
+fi
+```
+
+#### Step 4: Display Staleness Status
+
+Always display freshness check, regardless of staleness:
+
+**If Context is Fresh:**
+```
+✓ Context is current
+  Saved: {time_ago} ago ({date})
+  Commits since: {count}
+  Status: Up to date
+```
+
+**If Context is Stale:**
+```
+⚠ Context is stale
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Last saved: {time_ago} ago ({date})
+Current status:
+- Time elapsed: {days} days, {hours} hours
+- Commits since save: {count} commits
+- Files changed: ~{count} files
+- Warning threshold: {warn_hours} hours OR {warn_commits} commits
+
+⚠ Your saved context may be outdated and missing recent changes
+```
+
+**If Context is Very Stale:**
+```
+⚠⚠ Context is significantly outdated
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Last saved: {days} days ago ({date})
+Changes since: {commits} commits, ~{files} files modified
+
+⚠ HIGH RISK: Architectural changes likely occurred
+→ STRONGLY recommend running /context-save before proceeding
+```
+
+#### Step 5: Automatic Refresh Prompt
+
+If `AUTO_PROMPT` is enabled and context is stale:
+
+```bash
+if [ "$IS_STALE" = true ] && [ "$AUTO_PROMPT" = "true" ]; then
+  echo ""
+  echo "I recommend refreshing the context first."
+  echo ""
+  echo "Options:"
+  echo "1. Update now (recommended) - Run /context-save to capture recent changes"
+  echo "2. Proceed with stale context - Load potentially outdated information"
+  echo "3. Show what changed - Display commit log and file changes"
+  echo ""
+  echo "What would you like to do? [Reply with 1, 2, or 3]"
+
+  # Wait for user response
+  # If 1: Execute /context-save, then continue with restore
+  # If 2: Proceed with restore (add warnings to output)
+  # If 3: Show git changes, then ask again
+fi
+```
+
+**Option 3: Show What Changed**
+
+If user selects option 3:
+
+```bash
+echo ""
+echo "Changes since last context save (commit ${SAVED_COMMIT:0:7}):"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Recent commits ($COMMITS_SINCE):"
+git log --oneline ${SAVED_COMMIT}..${CURRENT_COMMIT} | head -10
+echo ""
+echo "Modified files ($CHANGED_FILES):"
+git diff --stat ${SAVED_COMMIT}..${CURRENT_COMMIT} | head -20
+echo ""
+echo "Areas likely outdated:"
+# Analyze changed files to determine affected areas
+if git diff --name-only ${SAVED_COMMIT}..${CURRENT_COMMIT} | grep -q "src/"; then
+  echo "- Architecture: Code changes detected"
+fi
+if git diff --name-only ${SAVED_COMMIT}..${CURRENT_COMMIT} | grep -q "package.json\|requirements.txt\|go.mod"; then
+  echo "- Dependencies: Package file(s) updated"
+fi
+if git diff --name-only ${SAVED_COMMIT}..${CURRENT_COMMIT} | grep -q "test\|spec"; then
+  echo "- Testing: Test file(s) modified"
+fi
+echo ""
+echo "Would you still like to proceed with stale context? [yes/no]"
+```
+
+#### Step 6: Version Migration Check
+
+If loading v1.0.0 context, migrate to v2.0.0:
+
+```bash
+if [ "$SAVED_VERSION" = "1.0.0" ]; then
+  echo "⚠ Context saved with older version (v1.0.0)"
+  echo ""
+  echo "Upgrading to current version (v2.0.0)..."
+
+  # Migrate schema (add new fields with defaults)
+  jq '. + {
+    "version": "2.0.0",
+    "extraction": {
+      "mode": (.compression // "standard"),
+      "filesAnalyzed": 0,
+      "patternsExtracted": 0
+    },
+    "fileTracking": {"snapshot": {"totalFiles": 0, "keyFiles": []}},
+    "staleness": {
+      "thresholds": {"warnAfterHours": 24, "warnAfterCommits": 5},
+      "autoPrompt": true
+    },
+    "history": {
+      "saves": [{"timestamp": .timestamp, "commit": .git.commit, "filesChanged": 0, "type": "migrated-from-v1"}],
+      "lastUpdate": .timestamp
+    }
+  }' .claude-context/metadata.json > .claude-context/metadata.json.tmp
+
+  mv .claude-context/metadata.json.tmp .claude-context/metadata.json
+
+  echo "✓ Context upgraded successfully"
+  echo ""
+  echo "New features enabled:"
+  echo "- Enhanced change tracking"
+  echo "- Automatic staleness detection"
+  echo "- Configurable thresholds"
+  echo ""
+fi
+```
+
+#### Step 7: Proceed with Restoration
+
+After staleness handling, continue with normal context loading...
 
 ### 2. Restoration Modes
 
@@ -117,25 +327,34 @@ Priority 3 (On-Demand):
 - Understand component relationships
 - Map data flows and integration points
 
-### 6. Freshness Validation
+### 6. Freshness Validation (Handled Upfront)
 
-When saved context diverges from current codebase:
+**Note**: Freshness validation and staleness detection are now handled automatically at the start of restoration (see Step 1 above). By the time context loading reaches this stage, staleness has already been checked and user has been prompted if needed.
 
-**Detection:**
-- Compare saved commit hash with current
-- Identify renamed/moved files
-- Detect pattern evolution
+**During Context Loading:**
 
-**Resolution:**
-- Highlight outdated patterns with warnings
-- Suggest running `/context-save` to update
-- Merge compatible changes automatically
-- Flag breaking changes for review
+If user chose to proceed with stale context, mark restored information appropriately:
 
-**Validation:**
-- Verify critical files still exist
-- Check if conventions have evolved
-- Confirm architecture is still accurate
+**For Stale Context:**
+- Add timestamps to sections: "(as of {date})"
+- Include warnings: "⚠ This information may be outdated"
+- Reference the staleness metrics in output
+- Suggest running `/context-save` after viewing context
+
+**For Very Stale Context:**
+- Add prominent warnings to all sections
+- Mark each section with "⚠⚠ POTENTIALLY OUTDATED"
+- Show last known state with clear timestamps
+- Strong recommendation to refresh before making decisions
+
+**For Fresh Context:**
+- No special markers needed
+- Display confidence level: "High confidence - context is current"
+
+**Additional Validation:**
+- Verify critical files still exist at referenced paths
+- Note if files have been renamed or moved
+- Flag if major dependencies have changed versions
 
 ### 7. Context Presentation
 
@@ -282,24 +501,95 @@ After restoration, provide:
 - Context save timestamp
 - Number of patterns loaded
 
-### 2. Freshness Check
+### 2. Enhanced Freshness Check
+
+**Note**: Freshness is checked BEFORE loading context. Display appropriate status:
+
+**Scenario 1: Fresh Context**
 ```
-✓ Context is current (saved 2 hours ago, no commits since)
-⚠ Context is stale (saved 3 days ago, 15 commits since)
-→ Consider running /context-save to refresh
+✓ Context is current
+  Saved: 2 hours ago (Dec 10, 2025 at 10:30 AM)
+  Commits since: 0
+  Files changed: 0
+  Status: Up to date
+  Confidence: High
+
+## Project Context Restored
+[Continue with normal context presentation]
+```
+
+**Scenario 2: Stale Context - User Chose to Proceed**
+```
+⚠ Context is stale
+  Last saved: 3 days ago (Dec 7, 2025)
+  Changes: 12 commits, ~27 files modified
+
+⚠ Loaded information may not reflect recent changes
+
+## Project Context Restored (as of Dec 7, 2025)
+
+⚠ Note: Context is 3 days old - proceed with caution
+
+[Context presentation with staleness warnings]
+
+→ Recommend running /context-save to refresh when convenient
+```
+
+**Scenario 3: Very Stale Context - User Chose to Proceed**
+```
+⚠⚠ Context is significantly outdated
+  Last saved: 8 days ago (Dec 2, 2025)
+  Changes: 34 commits, ~156 files modified
+
+⚠ HIGH RISK: Architectural changes likely occurred
+
+## Project Context Restored (POTENTIALLY OUTDATED)
+
+⚠⚠ WARNING: Context saved 8 days ago
+All information below marked as potentially outdated
+
+**Architecture Overview** ⚠⚠ POTENTIALLY OUTDATED
+(as of Dec 2, 2025)
+[architecture content]
+
+**Key Patterns** ⚠⚠ POTENTIALLY OUTDATED
+(as of Dec 2, 2025)
+[patterns content]
+
+→ STRONGLY recommend running /context-save before making decisions
+```
+
+**Scenario 4: Stale Context - Auto-prompt Shown, User Updated**
+```
+⚠ Context was stale (3 days old)
+
+🔄 Running /context-save to refresh...
+[Context save output]
+
+✓ Context has been refreshed
+
+Now loading updated context...
+
+✓ Context is current
+  Saved: Just now
+  Status: Up to date
+
+## Project Context Restored
+[Fresh context presentation]
 ```
 
 ### 3. Loaded Knowledge
-- Architecture patterns
-- Code conventions
-- Key file locations
-- Integration points
+- Architecture patterns (with staleness markers if applicable)
+- Code conventions (with timestamps if stale)
+- Key file locations (validated against current state)
+- Integration points (with outdated warnings if needed)
 - Development workflows
 
 ### 4. Next Steps
-- Suggested actions based on context
-- Gaps requiring update
-- Recommendations for focused exploration
+- Suggested actions based on context freshness
+- If stale: Recommendation to run `/context-save`
+- If fresh: Normal suggestions for exploration
+- Gaps requiring update or clarification
 
 ## Validation & Integrity
 
