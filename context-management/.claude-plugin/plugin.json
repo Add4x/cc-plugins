@@ -11,14 +11,10 @@
     "knowledge-management",
     "memory",
     "architecture",
-    "patterns"
+    "patterns",
+    "productivity"
   ],
-  "category": "productivity",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/cc-plugins"
-  },
-  "commands": "./commands",
-  "agents": "./agents"
+  "repository": "https://github.com/Add4x/cc-plugins",
+  "commands": "./commands/"
 }
